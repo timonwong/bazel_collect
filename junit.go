@@ -82,10 +82,12 @@ func MergeJunit(paths []string, output string) {
 				var content string
 				if test.SystemErr != "" {
 					content = test.SystemErr
-				} else if test.Message != "" {
-					content = test.Message
-				} else if test.SystemOut != "" {
-					content = test.SystemOut
+				}
+				if test.Message != "" {
+					content = content + "\n" + test.Message
+				}
+				if test.SystemOut != "" {
+					content = content + "\n" + test.SystemOut
 				}
 				tc.Failure = &JUnitFailure{
 					Message:  test.Message,
