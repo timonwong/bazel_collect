@@ -79,19 +79,9 @@ func MergeJunit(paths []string, output string) {
 				passed = passed + 1
 			}
 			if test.Status == junit.StatusFailed || test.Status == junit.StatusError {
-				var content string
-				if test.SystemErr != "" {
-					content = test.SystemErr
-				}
-				if test.Message != "" {
-					content = content + "\n" + test.Message
-				}
-				if test.SystemOut != "" {
-					content = content + "\n" + test.SystemOut
-				}
 				tc.Failure = &JUnitFailure{
 					Message:  test.Message,
-					Contents: content,
+					Contents: test.Error.Error(),
 				}
 				failed = failed + 1
 			}
