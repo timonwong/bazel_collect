@@ -11,6 +11,9 @@ import (
 )
 
 func MergeCoverage(files []string, output string) {
+	if len(files) == 0 {
+		os.Exit(1)
+	}
 	w, err := os.Create(output)
 	if err != nil {
 		fmt.Println("create cover file error:", err)

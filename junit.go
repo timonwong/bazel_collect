@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"io/ioutil"
 	"log"
+	"os"
 
 	junit "github.com/joshdk/go-junit"
 )
@@ -55,6 +56,9 @@ type JUnitFailure struct {
 }
 
 func MergeJunit(paths []string, output string) {
+	if len(paths) == 0 {
+		os.Exit(1)
+	}
 	suites, err := junit.IngestFiles(paths)
 	if err != nil {
 		log.Fatal(err)
