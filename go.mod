@@ -1,4 +1,4 @@
-module github.com/hawkingrei/bazel_collect
+module github.com/timonwong/bazel_collect
 
 go 1.19
 
