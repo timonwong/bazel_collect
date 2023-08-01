@@ -1,9 +1,9 @@
 module github.com/hawkingrei/bazel_collect
 
-go 1.18
+go 1.19
 
 require (
-	github.com/joshdk/go-junit v0.0.0-20210226021600-6145f504ca0d
-	golang.org/x/exp v0.0.0-20220602145555-4a0574d9293f
-	golang.org/x/tools v0.1.10
+	github.com/joshdk/go-junit v1.0.0
+	golang.org/x/exp v0.0.0-20230728194245-b0cb94b80691
+	golang.org/x/tools v0.11.0
 )

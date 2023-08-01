@@ -16,8 +16,7 @@ func MergeCoverage(files []string, output string) {
 	}
 	w, err := os.Create(output)
 	if err != nil {
-		fmt.Println("create cover file error:", err)
-		os.Exit(-1)
+		log.Fatalf("create cover file error: %s", err)
 	}
 	defer w.Close()
 	w.WriteString("mode: set\n")
@@ -41,7 +40,7 @@ func MergeCoverage(files []string, output string) {
 			)
 		}
 		if err := w1.Flush(); err != nil {
-			log.Fatal("flush data to cover profile file error:", err)
+			log.Fatalf("flush data to cover profile file error: %s", err)
 		}
 	}
 }
@@ -49,14 +48,13 @@ func MergeCoverage(files []string, output string) {
 func collectOneCoverProfileFile(result map[string]*cover.Profile, file string) {
 	f, err := os.Open(file)
 	if err != nil {
-		log.Fatal("open temp cover file error:", err)
-
+		log.Fatalf("open temp cover file error: %s", err)
 	}
 	defer f.Close()
 
 	profs, err := cover.ParseProfilesFromReader(f)
 	if err != nil {
-		log.Fatal("parse cover profile file error:", err)
+		log.Fatalf("parse cover profile file error: %s", err)
 	}
 	mergeProfile(result, profs)
 }
@@ -82,9 +80,8 @@ func compareProfileBlock(x, y cover.ProfileBlock) int {
 
 func mergeProfile(m map[string]*cover.Profile, profs []*cover.Profile) {
 	for _, prof := range profs {
-		slices.SortFunc(prof.Blocks, func(bi, bj cover.ProfileBlock) bool {
-			return bi.StartLine < bj.StartLine || bi.StartLine == bj.StartLine && bi.StartCol < bj.StartCol
-		})
+		slices.SortFunc(prof.Blocks, compareProfileBlock)
+
 		old, ok := m[prof.FileName]
 		if !ok {
 			m[prof.FileName] = prof

@@ -1,11 +1,11 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/fs"
 	"log"
 	"os"
-	"path"
 	"path/filepath"
 )
 
@@ -15,17 +15,25 @@ type ResultFile struct {
 }
 
 func main() {
-	ex, err := os.Getwd()
+	bazelSymlinkPrefix := flag.String("bazel-symlink-prefix", "bazel-", "Bazel symlink prefix.") // For --symlink_prefix in bazel
+	coverageFile := flag.String("output-coverage", "coverage.dat", "Output coverage file")
+	junitFile := flag.String("output-junit", "bazel.xml", "Output junit file")
+	flag.Parse()
+
+	workspaceDir, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
 	}
-	root_path, err := filepath.EvalSymlinks(path.Join(ex, "bazel-testlogs"))
+
+	testLogsDir := fmt.Sprintf("%stestlogs", *bazelSymlinkPrefix)
+	rootPath, err := filepath.EvalSymlinks(filepath.Join(workspaceDir, testLogsDir))
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("root: %v\n", root_path)
+	fmt.Printf("root: %v\n", rootPath)
+
 	var resultFiles ResultFile
-	err = filepath.WalkDir(root_path, func(path string, d fs.DirEntry, err error) error {
+	err = filepath.WalkDir(rootPath, func(path string, d fs.DirEntry, err error) error {
 		if d == nil {
 			return nil
 		}
@@ -42,9 +50,9 @@ func main() {
 	})
 	if err != nil {
 		log.Fatal(err)
-		return
 	}
-	MergeCoverage(resultFiles.Coverage, "coverage.dat")
-	MergeJunit(resultFiles.Junit, "bazel.xml")
+
+	MergeCoverage(resultFiles.Coverage, *coverageFile)
+	MergeJunit(resultFiles.Junit, *junitFile)
 	fmt.Println("complete to collect bazel result.")
 }

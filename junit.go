@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/xml"
-	"io/ioutil"
 	"log"
 	"os"
 
@@ -98,7 +97,7 @@ func MergeJunit(paths []string, output string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = ioutil.WriteFile(output, file, 0644)
+	err = os.WriteFile(output, file, 0o644)
 	if err != nil {
 		log.Fatal(err)
 	}
